@@ -1,5 +1,5 @@
 # telegrafo
-!(telegrafo)[telegrafo.jpg]
+![telegrafo](telegrafo.jpg)
 ```
 const {pulse, done, asyncGenerator: tube} = telegrafo()
 
