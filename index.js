@@ -28,11 +28,14 @@ const telegrafo = function telegrafo () {
   
   let first = true
   let end = false
+  let stop = false
   
   const asyncGenerator = async function* () {
     while (! end) {
       await p1
-      yield
+      if (! end) {
+        yield
+      } 
       await p2
     }
     return 
@@ -40,10 +43,17 @@ const telegrafo = function telegrafo () {
   
   const done = function done () {
     end = true
+    drain.next()
+    if (first) {
+      first = false
+      drain.next()
+    } else {
+      notFirstNext()    
+    }
   }
   
   const drain = (function* mkDrain () {
-    while (! end) {
+    while (true) {
       yield
       l1()
       yield
@@ -56,7 +66,8 @@ const telegrafo = function telegrafo () {
     return 
   })()
   
-  const notFirstNext = fntimes(() => drain.next())(4)
+  const notFirstNext = fntimes(() => drain.next())(3)
+
   const pulse = function pulse() {
    if (! end) {
      drain.next()
@@ -68,15 +79,17 @@ const telegrafo = function telegrafo () {
     }
    }
   }
-  return {drain, pulse, done, asyncGenerator}
+  return {pulse, done, asyncGenerator}
 }
 
-const {drain, pulse, done, asyncGenerator} = telegrafo()
+const {pulse, done, asyncGenerator} = telegrafo()
 
 const input = document.getElementsByTagName('input')[0]
 const  ol = document.getElementsByTagName('ol')[0]
 const button = document.getElementsByTagName('button')[0]
+const stop = document.getElementsByTagName('button')[1]
 button.onclick = pulse
+stop.onclick = done
 
 const loop = async function loop () {
   const ag = asyncGenerator()
@@ -84,7 +97,6 @@ const loop = async function loop () {
   let msg
   let li
   while (! next.done) {
-    console.log("loop")
     li = document.createElement("li")
     msg = input.value
     li.innerText = msg
@@ -92,4 +104,7 @@ const loop = async function loop () {
     next = await ag.next()
   }
 }
-loop()
+const promiseLoop = loop()
+promiseLoop.then(() => {
+  console.log("acabou o iterador")
+})
