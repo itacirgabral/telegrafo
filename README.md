@@ -1,4 +1,7 @@
 # telegrafo
+
+[![Greenkeeper badge](https://badges.greenkeeper.io/itacirgabral/telegrafo.svg)](https://greenkeeper.io/)
+
 ![telegrafo](telegrafo.jpg)
 ```
 const {pulse, done, asyncGenerator: tube} = telegrafo()
